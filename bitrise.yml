@@ -14,9 +14,7 @@ workflows:
     steps:
     - activate-ssh-key@4: { }
     - git-clone@6: { }
-    - flutter-installer@0:
-        inputs:
-        - is_update: "false"
+    - flutter-installer@0: { }
     - cache-pull@2: { }
     - flutter-test@1:
         inputs:
