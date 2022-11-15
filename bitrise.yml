@@ -54,10 +54,17 @@ workflows:
         - ios_output_type: archive
     - cache-push@2: { }
     - deploy-to-bitrise-io@2: { }
+
+trigger_map:
+- pull_request_source_branch: "*"
+  workflow: primary
+  pull_request_target_branch: main
+
 meta:
   bitrise.io:
     stack: osx-xcode-13.2.x
     machine_type_id: g2.4core
+
 app:
   envs:
   - opts:
