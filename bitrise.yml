@@ -58,11 +58,6 @@ trigger_map:
   workflow: primary
   pull_request_target_branch: main
 
-meta:
-  bitrise.io:
-    stack: osx-xcode-13.2.x
-    machine_type_id: g2.4core
-
 app:
   envs:
   - opts:
