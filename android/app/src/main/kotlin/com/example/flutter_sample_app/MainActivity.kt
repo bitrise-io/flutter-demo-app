@@ -1,4 +1,4 @@
-package com.example.flutter_sample_app
+package com.example.bitrise_flutter_sample_app
 
 import io.flutter.embedding.android.FlutterActivity
 
