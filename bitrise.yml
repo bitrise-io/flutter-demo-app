@@ -12,7 +12,6 @@ workflows:
       Next steps:
       - Check out [Getting started with Flutter apps](https://devcenter.bitrise.io/en/getting-started/getting-started-with-flutter-apps.html).
     steps:
-    - activate-ssh-key@4: { }
     - git-clone@6: { }
     - flutter-installer@0: { }
     - cache-pull@2: { }
@@ -32,7 +31,6 @@ workflows:
       - Check out [Getting started with Flutter apps](https://devcenter.bitrise.io/en/getting-started/getting-started-with-flutter-apps.html) for signing and deployment options.
       - Check out the [Code signing guide](https://devcenter.bitrise.io/en/code-signing.html) for iOS and Android
     steps:
-    - activate-ssh-key@4: { }
     - git-clone@6: { }
     - certificate-and-profile-installer@1: { }
     - flutter-installer@0:
