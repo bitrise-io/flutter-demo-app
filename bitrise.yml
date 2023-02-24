@@ -1,64 +1,80 @@
 ---
-format_version: "11"
+format_version: '11'
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 project_type: flutter
 
-workflows:
-
+pipelines:
   primary:
-    description: |
-      Builds project and runs tests.
+    stages:
+    - analyze-and-test-stage: { }
+    - export-stage: { }
+stages:
+  analyze-and-test-stage:
+    abort_on_fail: true
+    workflows:
+    - analyze: { }
+    - test: { }
+  export-stage:
+    abort_on_fail: true
+    workflows:
+    - export-ios-app: { }
+    - export-android-apk: { }
 
-      Next steps:
-      - Check out [Getting started with Flutter apps](https://devcenter.bitrise.io/en/getting-started/getting-started-with-flutter-apps.html).
+workflows:
+  _setup:
     steps:
-    - git-clone@6: { }
-    - flutter-installer@0: { }
-    - cache-pull@2: { }
-    - flutter-test@1:
+    - git-clone: { }
+    - restore-dart-cache: { }
+    - flutter-installer:
         inputs:
-        - project_location: $BITRISE_FLUTTER_PROJECT_LOCATION
-    - cache-push@2: { }
-    - deploy-to-bitrise-io@2: { }
-
-  deploy:
-    description: |
-      Builds and deploys app using [Deploy to bitrise.io Step](https://devcenter.bitrise.io/en/getting-started/getting-started-with-flutter-apps.html#deploying-a-flutter-app).
-
-      If you build for iOS, make sure to set up code signing secrets on Bitrise for a successful build.
-
-      Next steps:
-      - Check out [Getting started with Flutter apps](https://devcenter.bitrise.io/en/getting-started/getting-started-with-flutter-apps.html) for signing and deployment options.
-      - Check out the [Code signing guide](https://devcenter.bitrise.io/en/code-signing.html) for iOS and Android
+        - is_update: false
+  _teardown:
     steps:
-    - git-clone@6: { }
-    - certificate-and-profile-installer@1: { }
-    - flutter-installer@0:
+    - save-dart-cache: { }
+  analyze:
+    before_run:
+      - _setup
+    after_run:
+      - _teardown
+    steps:
+    - flutter-analyze: { }
+    - deploy-to-bitrise-io: { }
+  test:
+    before_run:
+      - _setup
+    after_run:
+      - _teardown
+    description: |
+      Runs tests.
+    steps:
+    - flutter-test: { }
+    - deploy-to-bitrise-io: { }
+  export-ios-app:
+    before_run:
+      - _setup
+    after_run:
+      - _teardown
+    steps:
+    - flutter-build:
         inputs:
-        - is_update: "false"
-    - cache-pull@2: { }
-    - flutter-analyze@0:
+        - platform: ios
+        - ios_additional_params: --simulator
+        - ios_output_pattern: |-
+            *build/ios/iphonesimulator/*.app
+    - deploy-to-bitrise-io: { }
+  export-android-apk:
+    before_run:
+      - _setup
+    after_run:
+      - _teardown
+    steps:
+    - flutter-build:
         inputs:
-        - project_location: $BITRISE_FLUTTER_PROJECT_LOCATION
-    - flutter-test@1:
-        inputs:
-        - project_location: $BITRISE_FLUTTER_PROJECT_LOCATION
-    - flutter-build@0:
-        inputs:
-        - project_location: $BITRISE_FLUTTER_PROJECT_LOCATION
-        - platform: both
-        - ios_output_type: archive
-    - cache-push@2: { }
-    - deploy-to-bitrise-io@2: { }
+        - platform: android
+        - android_additional_params: --debug
+    - deploy-to-bitrise-io: { }
 
-trigger_map:
-- push_branch: "*"
-  workflow: primary
-- pull_request_source_branch: "*"
-  workflow: primary
-
-app:
-  envs:
-  - opts:
-      is_expand: false
-    BITRISE_FLUTTER_PROJECT_LOCATION: .
+meta:
+  bitrise.io:
+    stack: osx-xcode-14.2.x-ventura
+    machine_type_id: g2.8core
