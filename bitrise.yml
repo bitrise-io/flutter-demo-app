@@ -10,10 +10,8 @@ pipelines:
     - export-stage: { }
 stages:
   analyze-and-test-stage:
-    abort_on_fail: true
     workflows:
-    - analyze: { }
-    - test: { }
+    - analyze-and-test: { }
   export-stage:
     abort_on_fail: true
     workflows:
@@ -31,15 +29,7 @@ workflows:
   _teardown:
     steps:
     - save-dart-cache: { }
-  analyze:
-    before_run:
-      - _setup
-    after_run:
-      - _teardown
-    steps:
-    - flutter-analyze: { }
-    - deploy-to-bitrise-io: { }
-  test:
+  analyze-and-test:
     before_run:
       - _setup
     after_run:
@@ -47,6 +37,7 @@ workflows:
     description: |
       Runs tests.
     steps:
+    - flutter-analyze: { }
     - flutter-test: { }
     - deploy-to-bitrise-io: { }
   export-ios-app:
