@@ -3,6 +3,10 @@ format_version: '11'
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 project_type: flutter
 
+trigger_map:
+- pull_request_source_branch: "*"
+  pipeline: primary
+
 pipelines:
   primary:
     stages:
@@ -71,7 +75,3 @@ workflows:
         - platform: android
         - android_additional_params: --debug
     - deploy-to-bitrise-io: { }
-
-meta:
-  bitrise.io:
-    stack: osx-xcode-14.2.x-ventura
