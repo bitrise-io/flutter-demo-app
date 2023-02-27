@@ -8,6 +8,10 @@ pipelines:
     stages:
     - analyze-and-test-stage: { }
     - export-stage: { }
+  deploy:
+    stages:
+    - analyze-and-test-stage: { }
+
 stages:
   analyze-and-test-stage:
     abort_on_fail: true
@@ -17,8 +21,8 @@ stages:
   export-stage:
     abort_on_fail: true
     workflows:
-    - export-ios-app: { }
-    - export-android-apk: { }
+    - export-ios-debug-app: { }
+    - export-android-debug-apk: { }
 
 workflows:
   _setup:
@@ -28,32 +32,26 @@ workflows:
     - flutter-installer:
         inputs:
         - is_update: false
-  _teardown:
+  _save_cache:
     steps:
     - save-dart-cache: { }
   analyze:
     before_run:
       - _setup
-    after_run:
-      - _teardown
     steps:
     - flutter-analyze: { }
     - deploy-to-bitrise-io: { }
   test:
     before_run:
       - _setup
-    after_run:
-      - _teardown
     description: |
       Runs tests.
     steps:
     - flutter-test: { }
     - deploy-to-bitrise-io: { }
-  export-ios-app:
+  export-ios-debug-app:
     before_run:
       - _setup
-    after_run:
-      - _teardown
     steps:
     - flutter-build:
         inputs:
@@ -62,11 +60,11 @@ workflows:
         - ios_output_pattern: |-
             *build/ios/iphonesimulator/*.app
     - deploy-to-bitrise-io: { }
-  export-android-apk:
+  export-android-debug-apk:
     before_run:
       - _setup
     after_run:
-      - _teardown
+      - _save_cache
     steps:
     - flutter-build:
         inputs:
