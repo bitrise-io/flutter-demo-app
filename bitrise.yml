@@ -75,3 +75,6 @@ workflows:
         - platform: android
         - android_additional_params: --debug
     - deploy-to-bitrise-io: { }
+    meta:
+      bitrise.io:
+        stack: linux-docker-android-20.04
