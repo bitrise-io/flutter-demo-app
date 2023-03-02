@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.bitrise_flutter_sample_app">
    <application
-        android:label="bitrise_flutter_sample_app"
+        android:label="Flutter Demo"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
