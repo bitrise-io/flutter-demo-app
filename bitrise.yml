@@ -93,10 +93,7 @@ workflows:
         inputs:
         - platform: ios
         - ios_output_type: archive
-        - ios_output_pattern: |-
-            *build/ios/ipa/*.ipa
     - deploy-to-bitrise-io@2: { }
-    - deploy-to-itunesconnect-deliver@2: { }
   export-android-release-apk:
     before_run:
     - _setup
@@ -108,7 +105,6 @@ workflows:
         - platform: android
         - android_additional_params: --release --split-per-abi
     - deploy-to-bitrise-io@2: { }
-    - google-play-deploy@3: { }
     meta:
       bitrise.io:
         stack: linux-docker-android-20.04
