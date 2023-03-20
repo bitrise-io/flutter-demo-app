@@ -1,1 +1,1 @@
-# getting-started-flutter-sample-app
+# flutter-demo-app
