@@ -2,7 +2,6 @@
 format_version: '11'
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 project_type: flutter
-
 trigger_map:
 - pull_request_source_branch: "*"
   pipeline: primary
@@ -10,55 +9,62 @@ trigger_map:
 pipelines:
   primary:
     stages:
-    - analyze-and-test: { }
-    - deploy-debug: { }
+    - analyze-and-test: {}
+  deploy-demo:
+    stages:  
+    - analyze-and-test: {}
+    - deploy-debug: {}
   deploy:
     stages:
-    - analyze-and-test: { }
-    - deploy-release: { }
+    - analyze-and-test: {}
+    - deploy-release: {}
 
 stages:
   analyze-and-test:
     abort_on_fail: true
     workflows:
-    - analyze: { }
-    - test: { }
+    - analyze: {}
+    - test: {}
   deploy-debug:
     abort_on_fail: true
     workflows:
-    - export-ios-debug-app: { }
-    - export-android-debug-apk: { }
+    - export-ios-debug-app: {}
+    - export-android-debug-apk: {}
   deploy-release:
     abort_on_fail: true
     workflows:
-    - export-ios-release-ipa: { }
-    - export-android-release-apk: { }
+    - export-ios-release-ipa: {}
+    - export-android-release-apk: {}
 
 workflows:
   _setup:
     steps:
-    - git-clone@8: { }
-    - restore-dart-cache@1: { }
+    - git-clone@8: {}
+    - restore-dart-cache@1: {}
     - flutter-installer@0:
         inputs:
         - is_update: false
+
   _save_cache:
     steps:
-    - save-dart-cache@1: { }
+    - save-dart-cache@1: {}
+
   analyze:
     before_run:
     - _setup
     steps:
-    - flutter-analyze@0: { }
-    - deploy-to-bitrise-io@2: { }
+    - flutter-analyze@0: {}
+    - deploy-to-bitrise-io@2: {}
+
   test:
     before_run:
     - _setup
     description: |-
       Runs tests.
     steps:
-    - flutter-test@1: { }
-    - deploy-to-bitrise-io@2: { }
+    - flutter-test@1: {}
+    - deploy-to-bitrise-io@2: {}
+
   export-ios-debug-app:
     before_run:
     - _setup
@@ -69,7 +75,8 @@ workflows:
         - ios_additional_params: --simulator
         - ios_output_pattern: |-
             *build/ios/iphonesimulator/*.app
-    - deploy-to-bitrise-io@2: { }
+    - deploy-to-bitrise-io@2: {}
+
   export-android-debug-apk:
     before_run:
     - _setup
@@ -80,20 +87,22 @@ workflows:
         inputs:
         - platform: android
         - android_additional_params: --debug
-    - deploy-to-bitrise-io@2: { }
+    - deploy-to-bitrise-io@2: {}
     meta:
       bitrise.io:
         stack: linux-docker-android-20.04
+
   export-ios-release-ipa:
     before_run:
     - _setup
     steps:
-    - certificate-and-profile-installer@1: { }
+    - certificate-and-profile-installer@1: {}
     - flutter-build@0:
         inputs:
         - platform: ios
         - ios_output_type: archive
-    - deploy-to-bitrise-io@2: { }
+    - deploy-to-bitrise-io@2: {}
+
   export-android-release-apk:
     before_run:
     - _setup
@@ -104,7 +113,7 @@ workflows:
         inputs:
         - platform: android
         - android_additional_params: --release --split-per-abi
-    - deploy-to-bitrise-io@2: { }
+    - deploy-to-bitrise-io@2: {}
     meta:
       bitrise.io:
         stack: linux-docker-android-20.04
